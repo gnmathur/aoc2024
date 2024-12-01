@@ -82,9 +82,9 @@ import java.util.stream.IntStream;
  * Once again consider your left and right lists. What is their similarity score?
  */
 public class Day1HistorianHysteria {
-    record GroupLocation(int left, int right) { }
+    private record GroupLocation(int left, int right) { }
 
-    public static List<GroupLocation> parse() {
+    private static List<GroupLocation> parse() {
         try (var lines = Files.lines(new File("src/main/resources/day1/input_historian_hysteria.lst").toPath())) {
             return lines.map(line -> {
                 String[] parts = line.split("\\s+");
@@ -95,7 +95,15 @@ public class Day1HistorianHysteria {
         }
     }
 
-    public static long part1(List<GroupLocation> gl) throws IOException {
+    /**
+     * @param gl List of GroupLocation objects
+     * @return The sum of the absolute differences between the left and right values of each GroupLocation object
+     * @throws IOException
+     *
+     * Using a mutable PriorityQueue to store the left and right values of each GroupLocation object. Deliberately using
+     * two PriorityQueues to demonstrate the use of this technique.
+     */
+    private static long part1(List<GroupLocation> gl) throws IOException {
         PriorityQueue<Integer> left = new PriorityQueue<>();
         PriorityQueue<Integer> right = new PriorityQueue<>();
 
@@ -109,7 +117,14 @@ public class Day1HistorianHysteria {
                 .sum();
     }
 
-    public static long part2(List<GroupLocation> gl) throws IOException {
+    /**
+     * @param gl List of GroupLocation objects
+     * @return The sum of the product of the left and right values of each GroupLocation object
+     * @throws IOException
+     *
+     * This is a pure functional solution with no side effects.
+     */
+    private static long part2(List<GroupLocation> gl) throws IOException {
         var leftUniqueVals = gl.stream()
                 .map(g -> g.left)
                 .collect(Collectors.toSet());
