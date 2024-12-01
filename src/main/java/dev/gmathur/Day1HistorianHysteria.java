@@ -1,11 +1,14 @@
 package dev.gmathur;
 
+import dev.gmathur.Util.AocResult;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * --- Day 1: Historian Hysteria ---
@@ -79,41 +82,53 @@ import java.util.PriorityQueue;
  * Once again consider your left and right lists. What is their similarity score?
  */
 public class Day1HistorianHysteria {
-    public static int part1() throws IOException {
+    record GroupLocation(int left, int right) { }
+
+    public static List<GroupLocation> parse() {
+        try (var lines = Files.lines(new File("src/main/resources/day1/input_historian_hysteria.lst").toPath())) {
+            return lines.map(line -> {
+                String[] parts = line.split("\\s+");
+                return new GroupLocation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+            }).toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static long part1(List<GroupLocation> gl) throws IOException {
         PriorityQueue<Integer> left = new PriorityQueue<>();
         PriorityQueue<Integer> right = new PriorityQueue<>();
 
-        try (var lines = Files.lines(new File("src/main/resources/day1/input_historian_hysteria.lst").toPath())) {
-            lines.forEach(line -> {
-                String[] parts = line.split("\\s+");
-                left.add(Integer.parseInt(parts[0]));
-                right.add(Integer.parseInt(parts[1]));
-            });
-        }
+        gl.forEach(g -> {
+            left.add(g.left);
+            right.add(g.right);
+        });
 
-        var distance = 0;
-        while (!left.isEmpty()) {
-            distance += Math.abs(left.poll() - right.poll());
-        }
-        return distance;
+        return IntStream.generate(() -> Math.abs(left.poll() - right.poll()))
+                .limit(gl.size())
+                .sum();
     }
 
-    public static long part2() throws IOException {
-        var leftUniqueVals = new HashSet<Integer>();
-        var rightFMap = new HashMap<Integer, Integer>();
-
-        try (var lines = Files.lines(new File("src/main/resources/day1/input_historian_hysteria.lst").toPath())) {
-            lines.forEach(line -> {
-                String[] parts = line.split("\\s+");
-                var leftVal = Integer.parseInt(parts[0]);
-                leftUniqueVals.add(Integer.parseInt(parts[0]));
-                var rightVal = Integer.parseInt(parts[1]);
-                rightFMap.put(rightVal, rightFMap.getOrDefault(rightVal, 0) + 1);
-            });
-        }
+    public static long part2(List<GroupLocation> gl) throws IOException {
+        var leftUniqueVals = gl.stream()
+                .map(g -> g.left)
+                .collect(Collectors.toSet());
+        var rightFMap = gl.stream()
+                .collect(
+                        Collectors.groupingBy(
+                                g -> g.right, Collectors.counting()));
 
         return leftUniqueVals.stream()
-                .mapToLong(leftVal -> leftVal * rightFMap.getOrDefault(leftVal, 0))
+                .mapToLong(leftVal -> leftVal * rightFMap.getOrDefault(leftVal, 0L))
                 .sum();
+    }
+
+    public static AocResult<Long, Long> solve() {
+        List<GroupLocation> gl = parse();
+        try {
+            return new AocResult<>(part1(gl), part2(gl));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,20 +1,18 @@
 package dev.gmathur;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 
 public class Day1HistorianHysteriaTest {
-
     @Test
-    public void testPart1() throws IOException {
-        assertTrue(Day1HistorianHysteria.part1() == 1110981);
-    }
+    public void testDay1() {
+        System.out.println(Day1HistorianHysteria.solve());
 
-    @Test
-    public void testPart2() throws IOException {
-        assertTrue(Day1HistorianHysteria.part2() == 24869388);
+        var result = Day1HistorianHysteria.solve();
+
+        assertEquals(result.part1(), 1110981);
+        assertEquals(result.part2(), 24869388);
     }
 }
