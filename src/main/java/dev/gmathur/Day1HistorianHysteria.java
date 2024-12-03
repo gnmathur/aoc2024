@@ -85,7 +85,7 @@ public class Day1HistorianHysteria {
     private record GroupLocation(int left, int right) { }
 
     private static List<GroupLocation> parse() {
-        try (var lines = Files.lines(new File("src/main/resources/day1/input_historian_hysteria.lst").toPath())) {
+        try (var lines = Files.lines(new File("src/main/resources/day1/input_d1_historian_hysteria.lst").toPath())) {
             return lines.map(line -> {
                 String[] parts = line.split("\\s+");
                 return new GroupLocation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
