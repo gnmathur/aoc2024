@@ -47,22 +47,15 @@ public class Day2RedNosedReports {
     private static int day2(Reports reports) {
         return (int) reports.reports().stream()
                 .filter(report -> {
-                    var levels = report.levels();
-                    var increasing = levels.get(1) > levels.get(0);
-
-                    for (int i = 0; i < levels.size() - 1; i++) {
-                        var diff = Math.abs(levels.get(i + 1) - levels.get(i));
-                        if (diff < 1 || diff > 3 ||
-                                (increasing && levels.get(i) > levels.get(i + 1)) ||
-                                (!increasing && levels.get(i) < levels.get(i + 1))) {
-                            for (int j = 0; j < levels.size(); j++) {
-                                var newReport = new Report(Util.listExcludingElementAtI(levels, j));
-                                if (checkReport(newReport)) {
-                                    return true;
-                                }
+                    if (!checkReport(report)) {
+                        var levels = report.levels();
+                        for (int j = 0; j < levels.size(); j++) {
+                            var newReport = new Report(Util.listExcludingElementAtI(levels, j));
+                            if (checkReport(newReport)) {
+                                return true;
                             }
-                            return false;
                         }
+                        return false;
                     }
                     return true;
                 })
