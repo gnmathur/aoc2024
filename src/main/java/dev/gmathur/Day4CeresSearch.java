@@ -32,17 +32,41 @@ public class Day4CeresSearch {
         return true;
     }
 
+    private static int day2(List<String> lines) {
+        var count = 0;
+        var R = lines.size();
+        var C = lines.get(0).length();
+        var topLeftToBottomRight = new int[][]{{-1,-1},{0,0},{1,1}};
+        var bottomRightToTopLeft = new int[][]{{1,1},{0,0},{-1,-1}};
+        var topRightToBottomLeft = new int[][]{{-1,1},{0,0},{1,-1}};
+        var bottomLeftToTopRight = new int[][]{{1,-1},{0,0},{-1,1}};
+        var target = "MAS";
+
+
+        for (int r = 0; r < lines.size(); r++) {
+            for (int c = 0; c < lines.get(0).length(); c++) {
+                if ((search(topLeftToBottomRight, lines, r, c, target, R, C) ||
+                    search(bottomRightToTopLeft, lines, r, c, target, R, C)) &&
+
+                    (search(topRightToBottomLeft, lines, r, c, target, R, C) ||
+                    search(bottomLeftToTopRight, lines, r, c, target, R, C))) {
+                    count ++;
+                }
+            }
+        }
+        return count;
+    }
 
     private static int day1(List<String> lines) {
         var directions = List.of(
-                new int[][]{{0,0},{0,1},{0,2},{0,3}},
-                new int[][]{{0,0},{0,-1},{0,-2},{0,-3}},
-                new int[][]{{0,0},{1,0},{2,0},{3,0}},
-                new int[][]{{0,0},{-1,0},{-2,0},{-3,0}},
-                new int[][]{{0,0},{1,1},{2,2},{3,3}},
-                new int[][]{{0,0},{-1,-1},{-2,-2},{-3,-3}},
-                new int[][]{{0,0},{1,-1},{2,-2},{3,-3}},
-                new int[][]{{0,0},{-1,1},{-2,2},{-3,3}}
+                new int[][]{{0,0},{0,1},{0,2},{0,3}}, // horizontal right
+                new int[][]{{0,0},{0,-1},{0,-2},{0,-3}}, // horizontal left
+                new int[][]{{0,0},{1,0},{2,0},{3,0}}, // vertical down
+                new int[][]{{0,0},{-1,0},{-2,0},{-3,0}}, // vertical up
+                new int[][]{{0,0},{1,1},{2,2},{3,3}}, // diagonal right down
+                new int[][]{{0,0},{-1,-1},{-2,-2},{-3,-3}}, // diagonal left up
+                new int[][]{{0,0},{1,-1},{2,-2},{3,-3}}, // diagonal left down
+                new int[][]{{0,0},{-1,1},{-2,2},{-3,3}} // diagonal right up
         );
 
         int R = lines.size();
@@ -61,11 +85,17 @@ public class Day4CeresSearch {
         return count;
     }
 
-    public static void main(String[] args) throws IOException {
-        List<String> lines = parse("src/main/resources/day4/input_d4_test1.lst");
+    public static void main(String[] args) {
+        List<String> lines = parse("src/main/resources/day4/input_d4_test.lst");
         assert(18 == day1(lines));
 
         List<String> lines2 = parse("src/main/resources/day4/input_d4.lst");
         assert(2578 == day1(lines2));
+
+        List<String> lines3 = parse("src/main/resources/day4/input_d4_test.lst");
+        assert(9 == day2(lines3));
+
+        List<String> lines4 = parse("src/main/resources/day4/input_d4.lst");
+        assert(1972 == day2(lines4));
     }
 }
