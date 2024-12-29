@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -38,13 +37,13 @@ public class Day2RedNosedReports {
                 });
     }
 
-    private static int day1(Reports reports) {
+    private static int part1(Reports reports) {
         return (int) reports.reports.stream()
                 .filter(Day2RedNosedReports::checkReport)
                 .count();
     }
 
-    private static int day2(Reports reports) {
+    private static int part2(Reports reports) {
         return (int) reports.reports().stream()
                 .filter(report -> {
                     if (!checkReport(report)) {
@@ -64,6 +63,6 @@ public class Day2RedNosedReports {
 
     public static Util.AocResult<Integer, Integer> solve() {
         Reports reports = parseReport();
-        return new Util.AocResult<>(day1(reports), day2(reports));
+        return new Util.AocResult<>(part1(reports), part2(reports));
     }
 }

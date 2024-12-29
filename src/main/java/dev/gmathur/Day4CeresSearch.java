@@ -32,7 +32,7 @@ public class Day4CeresSearch {
         return true;
     }
 
-    private static int day2(List<String> lines) {
+    private static int part2(List<String> lines) {
         var count = 0;
         var R = lines.size();
         var C = lines.get(0).length();
@@ -57,7 +57,7 @@ public class Day4CeresSearch {
         return count;
     }
 
-    private static int day1(List<String> lines) {
+    private static int part1(List<String> lines) {
         var directions = List.of(
                 new int[][]{{0,0},{0,1},{0,2},{0,3}}, // horizontal right
                 new int[][]{{0,0},{0,-1},{0,-2},{0,-3}}, // horizontal left
@@ -87,15 +87,15 @@ public class Day4CeresSearch {
 
     public static void main(String[] args) {
         List<String> lines = parse("src/main/resources/day4/input_d4_test.lst");
-        assert(18 == day1(lines));
+        assert(18 == part1(lines));
 
         List<String> lines2 = parse("src/main/resources/day4/input_d4.lst");
-        assert(2578 == day1(lines2));
+        assert(2578 == part1(lines2));
 
         List<String> lines3 = parse("src/main/resources/day4/input_d4_test.lst");
-        assert(9 == day2(lines3));
+        assert(9 == part2(lines3));
 
         List<String> lines4 = parse("src/main/resources/day4/input_d4.lst");
-        assert(1972 == day2(lines4));
+        assert(1972 == part2(lines4));
     }
 }

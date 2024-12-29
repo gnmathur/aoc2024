@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Day2RedNosedReportsTest {
     @Test
-    public void testDay2() {
+    public void testPart2() {
         var r = Day2RedNosedReports.solve();
 
         assertEquals(r.part1(), 502);

@@ -22,13 +22,13 @@ public class Day3MullItOver {
                 .sum();
     }
 
-    private static long day2(final String buffer) { return solver(buffer, false); }
-    private static long day1(final String buffer) { return solver(buffer, true); }
+    private static long part2(final String buffer) { return solver(buffer, false); }
+    private static long part1(final String buffer) { return solver(buffer, true); }
 
     public static AocResult<Long, Long> solve(){
         try {
             String input = Files.readString(new File("src/main/resources/day3/input_d3_mull_it_over.lst").toPath());
-            return new AocResult<>(day1(input), day2(input));
+            return new AocResult<>(part1(input), part2(input));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
