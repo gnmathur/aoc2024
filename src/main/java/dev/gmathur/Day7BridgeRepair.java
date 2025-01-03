@@ -5,10 +5,7 @@ import dev.gmathur.Util.Pair;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Day7BridgeRepair {
     private record SolutionInput(List<Pair<BigInteger, List<BigInteger>>> input) {}
@@ -35,20 +32,41 @@ public class Day7BridgeRepair {
         return new SolutionInput(input);
     }
 
+    /**
+     * At each index, we have three choices: add, multiply, or concatenate the current operand to the result. We use a memo to
+     * store the result of each sub-problem to avoid recomputing the same sub-problem multiple times. That seems to shave off
+     * around 300 ms from the execution time.
+     *
+     * @param target The target value to reach
+     * @param operands The list of operands
+     * @param idx The current index in the operands list
+     * @param result The current result
+     * @param memo The memo to store the result of each sub-problem
+     *
+     * @return True if we find a solution, false otherwise
+     */
     private static boolean solvePart2(final BigInteger target, final List<BigInteger> operands, final int idx,
-                                      final BigInteger result) {
+                                      final BigInteger result, Map<Pair<Integer, BigInteger>, Boolean> memo) {
+        final Pair<Integer, BigInteger> key = new Pair<>(idx, result);
+        if (memo.containsKey(key)) { return memo.get(key); }
         if (idx == operands.size()) { return result.equals(target); }
         if (result.compareTo(target) > 0) { return false; }
 
-        return solvePart2(target, operands, idx + 1, result.add(operands.get(idx))) ||
-                solvePart2(target, operands, idx + 1, result.multiply(operands.get(idx))) ||
-                solvePart2(target, operands, idx + 1, new BigInteger(result + operands.get(idx).toString()));
+        final boolean solved = solvePart2(target, operands, idx + 1, result.add(operands.get(idx)), memo) ||
+                solvePart2(target, operands, idx + 1, result.multiply(operands.get(idx)), memo) ||
+                solvePart2(target, operands, idx + 1, new BigInteger(result.toString() + operands.get(idx).toString()), memo);
+
+        memo.put(key, solved);
+        return solved;
     }
 
     public static BigInteger part2(String fileName) {
         final SolutionInput input = readFileFromResources(fileName);
         return input.input.stream()
-                .filter(p -> solvePart2(p.first(), p.second(), 0, BigInteger.ZERO))
+                .filter(p -> {
+                    Map<Pair<Integer, BigInteger>, Boolean> memo = new HashMap<>();
+                    return solvePart2(p.first(), p.second(), 0, BigInteger.ZERO, memo);
+                })
                 .map(Pair::first)
                 .reduce(BigInteger.ZERO, BigInteger::add);
     }

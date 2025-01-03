@@ -28,7 +28,9 @@ class Day7BridgeRepairTest {
 
     @Test
     void testPuzzleInputPart2() {
+        var start = System.currentTimeMillis();
         var r = Day7BridgeRepair.part2("day7/d7.input");
         assertEquals(new BigInteger("95297119227552"), r);
+        System.out.println("Time taken: " + (System.currentTimeMillis() - start) + "ms");
     }
 }
