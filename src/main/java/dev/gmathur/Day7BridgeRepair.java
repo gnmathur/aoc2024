@@ -35,6 +35,24 @@ public class Day7BridgeRepair {
         return new SolutionInput(input);
     }
 
+    private static boolean solvePart2(final BigInteger target, final List<BigInteger> operands, final int idx,
+                                      final BigInteger result) {
+        if (idx == operands.size()) { return result.equals(target); }
+        if (result.compareTo(target) > 0) { return false; }
+
+        return solvePart2(target, operands, idx + 1, result.add(operands.get(idx))) ||
+                solvePart2(target, operands, idx + 1, result.multiply(operands.get(idx))) ||
+                solvePart2(target, operands, idx + 1, new BigInteger(result + operands.get(idx).toString()));
+    }
+
+    public static BigInteger part2(String fileName) {
+        final SolutionInput input = readFileFromResources(fileName);
+        return input.input.stream()
+                .filter(p -> solvePart2(p.first(), p.second(), 0, BigInteger.ZERO))
+                .map(Pair::first)
+                .reduce(BigInteger.ZERO, BigInteger::add);
+    }
+
     /**
      * At each index, we have two choices: add or multiply the current operand to the result. We recursively try both
      * choices and return true if we find a solution at the end of the operands list.

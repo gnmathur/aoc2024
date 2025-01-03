@@ -20,4 +20,15 @@ class Day7BridgeRepairTest {
         assertEquals(BigInteger.valueOf(8401132154762L), r);
     }
 
+    @Test
+    void testTestInputPart2() {
+        var r = Day7BridgeRepair.part2("day7/d7_test.input");
+        assertEquals(BigInteger.valueOf(11387), r);
+    }
+
+    @Test
+    void testPuzzleInputPart2() {
+        var r = Day7BridgeRepair.part2("day7/d7.input");
+        assertEquals(new BigInteger("95297119227552"), r);
+    }
 }
