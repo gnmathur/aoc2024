@@ -60,7 +60,7 @@ public class Day6GuardGallivant {
     }
 
     /**
-     * Recursive function to find a cycle in the grid. It simulates the movement of the guard and checks if it has
+     * Find a cycle in the grid. It simulates the movement of the guard and checks if it has
      * visited a point before. If it has, then it has found a cycle.
      *
      * @param x x coordinate of the starting point
@@ -73,26 +73,28 @@ public class Day6GuardGallivant {
      *
      * @return True if a cycle is found, false otherwise
      */
+
     private static boolean findCycle(int x, int y, Direction direction, int R, int C, Set<Coordinate> obstacles,
                                      Set<Triple<Integer, Integer, Direction>> visited) {
+        while (true) {
+            if (visited.contains(new Triple<>(x, y, direction))) {
+                return true; // Cycle found
+            }
 
-        visited.add(new Triple<>(x, y, direction));
+            visited.add(new Triple<>(x, y, direction));
 
-        switch (direction) { case NORTH -> y--; case EAST -> x++; case SOUTH -> y++; case WEST -> x--; }
+            switch (direction) { case NORTH -> y--; case EAST -> x++; case SOUTH -> y++; case WEST -> x--; }
 
-        if (obstacles.contains(new Coordinate(x, y))) { // if you hit an obstacle
-            var new_direction = direction.nextClockwise(); // turn clockwise 90 degrees
-            switch (direction) { case NORTH -> y++; case EAST -> x--; case SOUTH -> y--; case WEST -> x++; } // go back
-            direction = new_direction;
+            if (obstacles.contains(new Coordinate(x, y))) { // if you hit an obstacle
+                var new_direction = direction.nextClockwise(); // turn clockwise 90 degrees
+                switch (direction) { case NORTH -> y++; case EAST -> x--; case SOUTH -> y--; case WEST -> x++; } // go back
+                direction = new_direction;
+            }
+
+            if (x < 0 || y < 0 || x >= C || y >= R) {
+                return false; // No cycle found, we hit the edge
+            }
         }
-        if (x < 0 || y < 0 || x >= C || y >= R) {
-            return false;// No cycle found, we hit the edge
-        }
-        if (visited.contains(new Triple<>(x, y, direction))) {
-            return true; // Cycle found
-        }
-
-        return findCycle(x, y, direction, R, C, obstacles, visited);
     }
 
     /**
