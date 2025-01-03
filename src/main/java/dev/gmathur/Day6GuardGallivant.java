@@ -5,12 +5,21 @@ import dev.gmathur.Util.Triple;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Day6GuardGallivant {
     private record Coordinate(int x, int y) {}
+
+    /**
+     * Record to store the input for the solution
+     *
+     * @param obstacles Set of coordinates of obstacles
+     * @param start Starting coordinate
+     * @param size Pair of the size of the grid (x, y)
+     */
     private record SolutionInput(Set<Coordinate> obstacles, Coordinate start, Pair<Integer, Integer> size) {}
 
-    // Direction enums for the four cardinal directions with next valid direction
+    // Direction enums for the four cardinal directions with next valid direction in clockwise order
     private enum Direction {
         NORTH, EAST, SOUTH, WEST;
 
@@ -25,80 +34,127 @@ public class Day6GuardGallivant {
     }
 
     private static SolutionInput readFileFromResources(final String fileName) {
-        // Try with resources to ensure the stream is closed automatically
         Set<Coordinate> obstacles = new HashSet<>();
-        int y = 0;
+        int y_max = 0;
         int x_max = 0;
         Coordinate start = null;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(Day6GuardGallivant.class.getClassLoader().getResourceAsStream(fileName))
+        try (BufferedReader reader =
+                     new BufferedReader(
+                             new InputStreamReader(
+                                     Objects.requireNonNull(Day6GuardGallivant.class.getClassLoader().getResourceAsStream(fileName))
         ))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 for (int x = 0; x < line.length(); x++) {
                     char c = line.charAt(x);
-                    if (c == '^') { start = new Coordinate(x, y); }
-                    if (c == '#') { obstacles.add(new Coordinate(x, y)); }
+                    if (c == '^') { start = new Coordinate(x, y_max); }
+                    if (c == '#') { obstacles.add(new Coordinate(x, y_max)); }
                 }
                 x_max = line.length();
-                y++;
+                y_max++;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return new SolutionInput(obstacles, start, new Pair<>(x_max, y));
+        return new SolutionInput(obstacles, start, new Pair<>(x_max, y_max));
     }
 
-    private static boolean dfs(int x, int y, Direction direction, int R, int C, Set<Coordinate> obstacles,
-                               Set<Triple<Integer, Integer, Direction>> visited) {
+    /**
+     * Recursive function to find a cycle in the grid. It simulates the movement of the guard and checks if it has
+     * visited a point before. If it has, then it has found a cycle.
+     *
+     * @param x x coordinate of the starting point
+     * @param y y coordinate of the starting point
+     * @param direction Direction the guard is facing at the starting point
+     * @param R Number of rows in the grid
+     * @param C Number of columns in the grid
+     * @param obstacles Set of coordinates of obstacles
+     * @param visited Set of visited coordinates
+     *
+     * @return True if a cycle is found, false otherwise
+     */
+    private static boolean findCycle(int x, int y, Direction direction, int R, int C, Set<Coordinate> obstacles,
+                                     Set<Triple<Integer, Integer, Direction>> visited) {
 
         visited.add(new Triple<>(x, y, direction));
 
         switch (direction) { case NORTH -> y--; case EAST -> x++; case SOUTH -> y++; case WEST -> x--; }
 
-        if (obstacles.contains(new Coordinate(x, y))) {
-            var new_direction = direction.nextClockwise();
-            switch (direction) { case NORTH -> y++; case EAST -> x--; case SOUTH -> y--; case WEST -> x++; }
+        if (obstacles.contains(new Coordinate(x, y))) { // if you hit an obstacle
+            var new_direction = direction.nextClockwise(); // turn clockwise 90 degrees
+            switch (direction) { case NORTH -> y++; case EAST -> x--; case SOUTH -> y--; case WEST -> x++; } // go back
             direction = new_direction;
         }
         if (x < 0 || y < 0 || x >= C || y >= R) {
-            return false;
+            return false;// No cycle found, we hit the edge
         }
         if (visited.contains(new Triple<>(x, y, direction))) {
-            return true;
+            return true; // Cycle found
         }
 
-        return dfs(x, y, direction, R, C, obstacles, visited);
+        return findCycle(x, y, direction, R, C, obstacles, visited);
     }
+
+    /**
+     * Part 2 of the solution. This solution works by simulating an obstacle at every point in the grid that's a
+     * non-obstacle and not a starting point. It then runs a DFS from the starting point to see if there's a cycle.
+     *
+     * @param fileName Name of the input file
+     * @return Number of unique paths
+     */
 
     public static int part2(final String fileName) {
         final SolutionInput input = readFileFromResources(fileName);
         final int start_x = input.start().x();
         final int start_y = input.start().y();
+        final int R = input.size().first();
+        final int C = input.size().second();
         final Direction direction = Direction.NORTH;
 
-        int count = 0;
+        AtomicInteger count = new AtomicInteger(0);
+        List<Thread> threads = new ArrayList<>();
+
         for (int x = 0; x < input.size().first(); x++) {
             for (int y = 0; y < input.size().second(); y++) {
-                if (input.obstacles().contains(new Coordinate(x, y))) {
-                    continue;
-                }
-                if (x == start_x && y == start_y) {
-                    continue;
-                }
-                // simulate an obstacle at (x, y)
-                input.obstacles.add(new Coordinate(x, y));
-                if (dfs(start_x, start_y, direction, input.size().second(), input.size().first(), input.obstacles(), new HashSet<>())) {
-                    count++;
-                }
-                input.obstacles.remove(new Coordinate(x, y));
+                final int finalX = x;
+                final int finalY = y;
+                Thread thread = Thread.ofVirtual().start(() -> {
+                    if (input.obstacles().contains(new Coordinate(finalX, finalY))) {
+                        return;
+                    }
+                    if (finalX == start_x && finalY == start_y) {
+                        return;
+                    }
+                    // simulate an obstacle at (finalX, finalY)
+                    final Set<Coordinate> localObstacles = new HashSet<>(input.obstacles());
+                    localObstacles.add(new Coordinate(finalX, finalY));
+                    if (findCycle(start_x, start_y, direction, C, R, localObstacles, new HashSet<>())) {
+                        count.incrementAndGet();
+                    }
+                });
+                threads.add(thread);
             }
         }
-        return count;
+
+        for (Thread thread : threads) {
+            try { thread.join(); }
+            catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        }
+
+        return count.get();
     }
 
-    public static int part1(String fileName) {
-        SolutionInput input = readFileFromResources(fileName);
+    /**
+     * Part 1 of the solution. This solution works by simulating the movement of the guard in the grid. If the guard
+     * hits an obstacle, it turns clockwise 90 degrees and goes back one step. If it hits the edge of the grid,
+     * it stops.
+     *
+     * @param fileName Name of the input file
+     *
+     * @return Number of unique paths
+     */
+    public static int part1(final String fileName) {
+        final SolutionInput input = readFileFromResources(fileName);
         int x = input.start().x();
         int y = input.start().y();
         Direction direction = Direction.NORTH;
@@ -106,24 +162,15 @@ public class Day6GuardGallivant {
 
         visited.add(new Pair<>(x, y));
         while (true) {
-            switch (direction) {
-                case NORTH -> y--;
-                case EAST -> x++;
-                case SOUTH -> y++;
-                case WEST -> x--;
-            }
+            switch (direction) { case NORTH -> y--; case EAST -> x++; case SOUTH -> y++; case WEST -> x--; }
 
             if (x < 0 || y < 0 || x >= input.size().first() || y >= input.size().second()) {
                 break;
             }
 
             if (input.obstacles().contains(new Coordinate(x, y))) {
-                switch (direction) {
-                    case NORTH -> y++;
-                    case EAST -> x--;
-                    case SOUTH -> y--;
-                    case WEST -> x++;
-                }
+                // If you hit an obstacle, turn clockwise 90 degrees and go back one step
+                switch (direction) { case NORTH -> y++; case EAST -> x--; case SOUTH -> y--; case WEST -> x++; }
                 direction = direction.nextClockwise();
             } else {
                 visited.add(new Pair<>(x, y));
