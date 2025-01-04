@@ -45,7 +45,7 @@ public class Day8ResonantCollinearity {
         int R = 0;
         int C = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(Day7BridgeRepair.class.getClassLoader().getResourceAsStream(fileName))))) {
+                Objects.requireNonNull(Day8ResonantCollinearity.class.getClassLoader().getResourceAsStream(fileName))))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 C = line.length();
