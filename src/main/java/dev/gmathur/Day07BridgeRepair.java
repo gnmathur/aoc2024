@@ -7,14 +7,14 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.*;
 
-public class Day7BridgeRepair {
+public class Day07BridgeRepair {
     private record SolutionInput(List<Pair<BigInteger, List<BigInteger>>> input) {}
 
     private static SolutionInput readFileFromResources(final String fileName) {
         List<Pair<BigInteger, List<BigInteger>>> input = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(Day7BridgeRepair.class.getClassLoader().getResourceAsStream(fileName))))) {
+                Objects.requireNonNull(Day07BridgeRepair.class.getClassLoader().getResourceAsStream(fileName))))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] tokens = line.split(": ");

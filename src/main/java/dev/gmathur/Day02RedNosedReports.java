@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class Day2RedNosedReports {
+public class Day02RedNosedReports {
     private record Report(List<Integer> levels) { }
     private record Reports(List<Report> reports) { }
 
@@ -39,7 +39,7 @@ public class Day2RedNosedReports {
 
     private static int part1(Reports reports) {
         return (int) reports.reports.stream()
-                .filter(Day2RedNosedReports::checkReport)
+                .filter(Day02RedNosedReports::checkReport)
                 .count();
     }
 

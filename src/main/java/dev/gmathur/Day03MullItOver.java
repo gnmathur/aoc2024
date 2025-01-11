@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.regex.Pattern;
 
-public class Day3MullItOver {
+public class Day03MullItOver {
     private static long solver(final String buffer, final Boolean ignore) {
         final var regex = "mul\\((\\d{1,3}),(\\d{1,3})\\)|do\\(\\)|don't\\(\\)";
         final var matcher = Pattern.compile(regex).matcher(buffer);

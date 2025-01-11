@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class Day3MullItOverTest {
+class Day03MullItOverTest {
     @Test
     void testDay3() {
-        assertEquals(188116424, Day3MullItOver.solve().part1());
-        assertEquals(104245808, Day3MullItOver.solve().part2());
+        assertEquals(188116424, Day03MullItOver.solve().part1());
+        assertEquals(104245808, Day03MullItOver.solve().part2());
     }
 
 }

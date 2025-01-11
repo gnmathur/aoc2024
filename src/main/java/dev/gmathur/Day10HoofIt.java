@@ -35,7 +35,7 @@ public class Day10HoofIt {
 
     private static SolutionInput parse(String filename) {
         try (var reader = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(Day9DiskFragmenter.class.getClassLoader().getResourceAsStream(filename))))) {
+                Objects.requireNonNull(Day09DiskFragmenter.class.getClassLoader().getResourceAsStream(filename))))) {
 
             var grid = reader.lines()
                     .map(line -> line.chars()

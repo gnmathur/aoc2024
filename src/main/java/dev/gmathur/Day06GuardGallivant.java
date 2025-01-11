@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Day6GuardGallivant {
+public class Day06GuardGallivant {
     private record Coordinate(int x, int y) {}
 
     /**
@@ -41,7 +41,7 @@ public class Day6GuardGallivant {
         try (BufferedReader reader =
                      new BufferedReader(
                              new InputStreamReader(
-                                     Objects.requireNonNull(Day6GuardGallivant.class.getClassLoader().getResourceAsStream(fileName))
+                                     Objects.requireNonNull(Day06GuardGallivant.class.getClassLoader().getResourceAsStream(fileName))
         ))) {
             String line;
             while ((line = reader.readLine()) != null) {

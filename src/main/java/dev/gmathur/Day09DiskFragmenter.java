@@ -40,12 +40,12 @@ import java.util.stream.IntStream;
  * 2. One thing to note here is that the Solution input files list will have wrong information after part2 is run because
  * the files are moved to the contiguous free space. The files list is not needed after part2 is run so it is not a problem.
  */
-public class Day9DiskFragmenter {
+public class Day09DiskFragmenter {
     private record SolutionInput(List<Optional<Long>> physicalDisk, List<Pair<Long, List<Integer>>> files) {}
 
     private SolutionInput parse(String filename) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(
-                Day9DiskFragmenter.class.getClassLoader().getResourceAsStream(filename))))) {
+                Day09DiskFragmenter.class.getClassLoader().getResourceAsStream(filename))))) {
             final List<Optional<Long>> physicalDisk = new ArrayList<>();
             final List<Pair<Long, List<Integer>>> files = new ArrayList<>();
 

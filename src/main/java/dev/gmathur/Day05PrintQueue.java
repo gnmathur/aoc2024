@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
-public class Day5PrintQueue {
+public class Day05PrintQueue {
     private record SolutionInput(Map<Integer, Set<Integer>> ordering, List<List<Integer>> updates) { }
 
     private static SolutionInput parse(String filename) {

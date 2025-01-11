@@ -34,7 +34,7 @@ import java.util.function.BiPredicate;
  * 1. Part 1 turns out to be an easier version of the problem where we only need to find the antinodes, disregarding
  * the manhattan distance.
  */
-public class Day8ResonantCollinearity {
+public class Day08ResonantCollinearity {
     // Solution input is a record that stores the list of antennas and the size of the grid. The list of antennas is a
     // list of Triples where each Triple represents an antenna by its row, column, and character value -
     // (row, column, character).
@@ -45,7 +45,7 @@ public class Day8ResonantCollinearity {
         int R = 0;
         int C = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(Day8ResonantCollinearity.class.getClassLoader().getResourceAsStream(fileName))))) {
+                Objects.requireNonNull(Day08ResonantCollinearity.class.getClassLoader().getResourceAsStream(fileName))))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 C = line.length();

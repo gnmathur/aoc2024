@@ -6,30 +6,30 @@ import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class Day7BridgeRepairTest {
+class Day07BridgeRepairTest {
     @Test
     void testTestInputPart1() {
-        var r = Day7BridgeRepair.part1("day7/d7_test.input");
+        var r = Day07BridgeRepair.part1("day7/d7_test.input");
         assertEquals(BigInteger.valueOf(3749), r);
     }
 
     @Test
     void testPuzzleInputPart1() {
-        var r = Day7BridgeRepair.part1("day7/d7.input");
+        var r = Day07BridgeRepair.part1("day7/d7.input");
         // compare to 8401132154762
         assertEquals(BigInteger.valueOf(8401132154762L), r);
     }
 
     @Test
     void testTestInputPart2() {
-        var r = Day7BridgeRepair.part2("day7/d7_test.input");
+        var r = Day07BridgeRepair.part2("day7/d7_test.input");
         assertEquals(BigInteger.valueOf(11387), r);
     }
 
     @Test
     void testPuzzleInputPart2() {
         var start = System.currentTimeMillis();
-        var r = Day7BridgeRepair.part2("day7/d7.input");
+        var r = Day07BridgeRepair.part2("day7/d7.input");
         assertEquals(new BigInteger("95297119227552"), r);
         System.out.println("Time taken: " + (System.currentTimeMillis() - start) + "ms");
     }

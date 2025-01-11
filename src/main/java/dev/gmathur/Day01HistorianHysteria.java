@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Day1HistorianHysteria {
+public class Day01HistorianHysteria {
     private record GroupLocation(int left, int right) { }
 
     private static List<GroupLocation> parse() {

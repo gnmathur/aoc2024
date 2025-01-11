@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Day4CeresSearch {
+public class Day04CeresSearch {
     private static List<String> parse(String filename) {
         try (var lines = Files.lines(new File(filename).toPath())) {
             return lines.collect(Collectors.toList());
