@@ -6,7 +6,30 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.IntStream;
 
+/**
+ * Solution for Day 10 - Hoof It
+ * <a href="https://adventofcode.com/2024/day/10">...</a>
+ *
+ *
+ * Time complexity: O(R * C * 4^9) where R is the number of rows in the grid, and C is the number of columns in the grid. Note
+ * that at each cell in the grid, we can move in 4 directions, and the maximum number of steps to reach the end is 9.
+ *
+ * Run time on MacBook Pro M3
+ *
+ * Part1 test input: 10ms
+ * Part1 problem input: 1ms
+ *
+ * Part2 test input: 7ms
+ * Part2 problem input: 4ms
+ *
+ * Notes:
+ * 1. Happy with the way I was able to use a core backtracking algorithm to solve both parts of this problem
+ * 2. I was able to use functional code in all parts of the solution, so that was a good exercise
+ * 3. The absolute runtimes are very low, so I am happy with the performance of the solution
+ *
+ */
 public class Day10HoofIt {
     private record SolutionInput(int[][] grid, int R, int C) {}
 
@@ -51,45 +74,48 @@ public class Day10HoofIt {
      *
      * @return the number of ways to reach the end from the current cell (r, c)
      */
-    public static int part1Solver(int[][] grid, int r, int c, int R, int C,
-                                  Map<Pair<Integer, Integer>, Integer> memo,
-                                  Set<Pair<Integer, Integer>> num9s) {
+    public static int solver(int[][] grid, int r, int c, int R, int C,
+                             Map<Pair<Integer, Integer>, Integer> memo,
+                             Set<Pair<Integer, Integer>> num9s) {
         var coor = new Pair<>(r, c);
         if (memo.containsKey(coor)) { return memo.get(coor); }
         if (grid[r][c] == 9) { num9s.add(coor); return 1; }
 
         // visit neighbors in all 4 directions
-
-        int ways = 0;
-        for (int[] dir : new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}) {
-            int newR = r + dir[0];
-            int newC = c + dir[1];
-            if (newR >= 0 && newR < R && newC >= 0 && newC < C && grid[newR][newC] - grid[r][c] == 1) {
-                ways += part1Solver(grid, newR, newC, R, C, memo, num9s);
-            }
-        }
+        final int ways = Arrays.stream(new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}})
+                .mapToInt(dir -> {
+                    int newR = r + dir[0];
+                    int newC = c + dir[1];
+                    return (newR >= 0 && newR < R && newC >= 0 && newC < C && grid[newR][newC] - grid[r][c] == 1)
+                            ? solver(grid, newR, newC, R, C, memo, num9s)
+                            : 0;
+                })
+                .sum();
 
         memo.put(coor, ways);
 
         return ways;
     }
 
+    private static int solve(String fileName, boolean count9s) {
+        var si = parse(fileName);
+        return IntStream.range(0, si.R)
+                .flatMap(r -> IntStream.range(0, si.C)
+                        .filter(c -> si.grid[r][c] == 0)
+                        .map(c -> {
+                            var memo = new HashMap<Pair<Integer, Integer>, Integer>();
+                            var num9s = new HashSet<Pair<Integer, Integer>>();
+                            int result = solver(si.grid, r, c, si.R, si.C, memo, num9s);
+                            return count9s ? num9s.size() : result;
+                        }))
+                .sum();
+    }
+
+    public static int part2(String filename) {
+        return solve(filename, false);
+    }
+
     public static int part1(String filename) {
-        var si = parse(filename);
-        int ways = 0;
-
-        for (int r= 0; r < si.R; r++) {
-            for (int c = 0; c < si.C; c++) {
-                if (si.grid[r][c] == 0) {
-                    // visit all cells in sequence starting from 0 till 9
-                    var memo = new HashMap<Pair<Integer, Integer>, Integer>();
-                    var num9s = new HashSet<Pair<Integer, Integer>>();
-                    part1Solver(si.grid, r, c, si.R, si.C, memo, num9s);
-                    ways += num9s.size();
-                }
-            }
-        }
-
-        return ways;
+        return solve(filename, true);
     }
 }

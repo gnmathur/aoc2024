@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 /**
  * Solution for Day 9 of Advent of Code 2024 - Disk Fragmenter
  * Problem description: <a href="https://adventofcode.com/2024/day/9">...</a>
- *
+ * <p>
  * The approach -
  * 1. Read the input from the file and store the physical disk and the files in a list. The physical disk is represented
  * by a list of Optional Long values. The list index is a block identifier, and the value is the file identifier if the
@@ -24,16 +24,16 @@ import java.util.stream.IntStream;
  * and contiguous sequences of blocks that are not occupied by files. We do this by finding the first free block contiguous
  * sequence from the beginning of the physical disk, that can accommodate the file blocks, and move the first file from
  * the end to this sequence. We move to the next file from the end and move it the same way until all files are moved.
- *
+ * <p>
  * Complexity and Runtimes:
  * The time complexity for both parts 1 and 2 is O(N * B), where:
  *    N is the number of files
  *    B is the number of blocks in the disk
- *
+ * <p>
  * Runtimes on MacBook Pro M3:
  *   Part 1: 13ms
  *   Part 2: 211ms
- *
+ * <p>
  * Notes:
  * 1. It was real fun to find the most suitable data structures to represent the physical disk and the files. It took
  * a couple of iterations to arrive at the data structures in the SolutionInput
