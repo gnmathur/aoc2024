@@ -25,6 +25,13 @@ public class Util {
         return result;
     }
 
+    public static void runTimedWithLabel(String label, Runnable runnable) {
+        long start = System.currentTimeMillis();
+        runnable.run();
+        long end = System.currentTimeMillis();
+        System.out.printf("[%s] took: %dms%n", label, end - start);
+    }
+
     public static void runTimed(Runnable runnable) {
         long start = System.currentTimeMillis();
         runnable.run();
