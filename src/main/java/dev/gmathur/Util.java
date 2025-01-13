@@ -2,8 +2,13 @@ package dev.gmathur;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -37,6 +42,48 @@ public class Util {
         runnable.run();
         long end = System.currentTimeMillis();
         System.out.println("Time taken: " + (end - start) + "ms");
+    }
+
+
+    public static class FileLineIterator implements Iterator<String>, AutoCloseable {
+        private final BufferedReader reader;
+        private String nextLine;
+
+        public FileLineIterator(String filename) throws IOException {
+            this.reader = new BufferedReader(new FileReader(filename));
+            this.nextLine = reader.readLine();
+        }
+
+        @Override
+        public boolean hasNext() { return nextLine != null; }
+
+        @Override
+        public String next() {
+            if (!hasNext()) { throw new NoSuchElementException("No more lines remaining in the file."); }
+            String currentLine = nextLine;
+            try {
+                nextLine = reader.readLine();
+            } catch (IOException e) { throw new RuntimeException("Error reading next line", e); }
+            return currentLine;
+        }
+
+        @Override
+        public void close() throws IOException { reader.close(); }
+
+        /**
+         * Example usage of the FileLineIterator
+         */
+        public static void vooid(String[] args) {
+            String filename = "sample.txt";  // Replace with your file path
+
+            try (FileLineIterator fileIterator = new FileLineIterator(filename)) {
+                while (fileIterator.hasNext()) {
+                    System.out.println("Line: " + fileIterator.next());
+                }
+            } catch (IOException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
     }
 
     public static class GridDrawer extends JPanel {
