@@ -2,6 +2,7 @@ package dev.gmathur;
 
 import org.junit.jupiter.api.Test;
 
+import static dev.gmathur.Util.runTimedWithLabel;
 import static org.junit.jupiter.api.Assertions.*;
 
 class Day05PrintQueueTest {
@@ -14,13 +15,15 @@ class Day05PrintQueueTest {
 
         var time = System.currentTimeMillis();
 
-        int r3 = Day05PrintQueue.part1("src/main/resources/day5/d5.input");
-        assertEquals(7198, r3);
+        runTimedWithLabel("D5 Part 1", () -> {
+            int r = Day05PrintQueue.part1("src/main/resources/day5/d5.input");
+            assertEquals(7198, r);
+        });
 
-        int r4 = Day05PrintQueue.part2("src/main/resources/day5/d5.input");
-        assertEquals(4230, r4);
-
-        System.out.println("Time taken: " + (System.currentTimeMillis() - time) + "ms");
+        runTimedWithLabel("D5 Part 2", () -> {
+            int r = Day05PrintQueue.part2("src/main/resources/day5/d5.input");
+            assertEquals(4230, r);
+        });
     }
 
 }

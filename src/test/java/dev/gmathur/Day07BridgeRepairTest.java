@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
+import static dev.gmathur.Util.runTimedWithLabel;
 import static org.junit.jupiter.api.Assertions.*;
 
 class Day07BridgeRepairTest {
@@ -15,9 +16,10 @@ class Day07BridgeRepairTest {
 
     @Test
     void testPuzzleInputPart1() {
-        var r = Day07BridgeRepair.part1("day7/d7.input");
-        // compare to 8401132154762
-        assertEquals(BigInteger.valueOf(8401132154762L), r);
+        runTimedWithLabel("D7 Part 1", () -> {
+            var r = Day07BridgeRepair.part1("day7/d7.input");
+            assertEquals(BigInteger.valueOf(8401132154762L), r);
+        });
     }
 
     @Test
@@ -28,9 +30,9 @@ class Day07BridgeRepairTest {
 
     @Test
     void testPuzzleInputPart2() {
-        var start = System.currentTimeMillis();
-        var r = Day07BridgeRepair.part2("day7/d7.input");
-        assertEquals(new BigInteger("95297119227552"), r);
-        System.out.println("Time taken: " + (System.currentTimeMillis() - start) + "ms");
+        runTimedWithLabel("D7 Part 2", () -> {
+            var r = Day07BridgeRepair.part2("day7/d7.input");
+            assertEquals(new BigInteger("95297119227552"), r);
+        });
     }
 }
