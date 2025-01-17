@@ -96,6 +96,7 @@ public class Day13ClawContraption {
                         input.prizeX + offset,
                         input.prizeY + offset
                 ))
+                // filter out solutions that are not whole numbers
                 .filter(solution -> solution.first() % 1 == 0 && solution.second() % 1 == 0)
                 .mapToDouble(solution -> solution.first() * 3 + solution.second())
                 .sum();
