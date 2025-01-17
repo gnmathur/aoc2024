@@ -23,6 +23,7 @@ Java 21 solutions to AOC 2024. The aim is to achieve the following objectives, i
 | Day 10 | [Hoof It](https://github.com/gnmathur/aoc2024/blob/main/src/main/java/dev/gmathur/Day10HoofIt.java)                             | 26ms           | 27ms           |
 | Day 11 | [Plutonian Pebbles](https://github.com/gnmathur/aoc2024/blob/main/src/main/java/dev/gmathur/Day11PlutonianPebbles.java)         | 3ms            | 93ms           |
 | Day 12 | [Garden Groups](https://github.com/gnmathur/aoc2024/blob/main/src/main/java/dev/gmathur/Day12GardenGroups.java)                 | 26ms           | 19ms           |
+| Day 13 | [Claw Contraption](https://github.com/gnmathur/aoc2024/blob/main/src/main/java/dev/gmathur/Day13ClawContraption.java)           | 1ms            | 3ms            |
 
 ## Notes
 - All runtimes are approximate and measured on Macbook Pro M3 with just a single run
