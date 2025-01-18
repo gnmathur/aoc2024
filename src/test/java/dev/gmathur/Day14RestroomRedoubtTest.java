@@ -21,4 +21,13 @@ class Day14RestroomRedoubtTest {
         });
     }
 
+    @Test
+    public void testPart2WithTestInput() {
+        runTimedWithLabel("D14 part 2 problem input", () -> {
+            Day14RestroomRedoubt.part2("day14/d14.dat", 101, 103);
+            // always true
+            assertTrue(true);
+        });
+    }
+
 }
