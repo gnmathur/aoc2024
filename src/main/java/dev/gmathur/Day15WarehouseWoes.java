@@ -80,19 +80,19 @@ public class Day15WarehouseWoes {
         return cells;
     }
 
-    private static ArrayDeque<Cell> cellsToTheLeftOf(Cell cell, char[][] grid, int R, int C) {
+    private static ArrayDeque<Cell> cellsToTheLeftOf(final Cell cell, final char[][] grid, final int R, final int C) {
         return cellsInDirection(cell, grid, R, C, 0, -1);
     }
 
-    private static ArrayDeque<Cell> cellsToTheRightOf(Cell cell, char[][] grid, int R, int C) {
+    private static ArrayDeque<Cell> cellsToTheRightOf(final Cell cell, final char[][] grid, final int R, final int C) {
         return cellsInDirection(cell, grid, R, C, 0, 1);
     }
 
-    private static ArrayDeque<Cell> cellsAbove(Cell cell, char[][] grid, int R, int C) {
+    private static ArrayDeque<Cell> cellsAbove(final Cell cell, final char[][] grid, final int R, final int C) {
         return cellsInDirection(cell, grid, R, C, -1, 0);
     }
 
-    private static ArrayDeque<Cell> cellsBelow(Cell cell, char[][] grid, int R, int C) {
+    private static ArrayDeque<Cell> cellsBelow(final Cell cell, final char[][] grid, final int R, final int C) {
         return cellsInDirection(cell, grid, R, C, 1, 0);
     }
 
@@ -111,11 +111,11 @@ public class Day15WarehouseWoes {
      *
      * @return the new location of the robot after moving the cells
      */
-    private static Cell moveCells(final ArrayDeque<Cell> cells, final char[][] grid, final Cell robot, int R, int C,
-                                  int dr, int dc) {
+    private static Cell moveCells(final ArrayDeque<Cell> cells, final char[][] grid, final Cell robot, final int R,
+                                  final int C, final int dr, final int dc) {
         final Cell leadingCell = cells.getLast();
-        int newRow = leadingCell.r() + dr;
-        int newCol = leadingCell.c() + dc;
+        final int newRow = leadingCell.r() + dr;
+        final int newCol = leadingCell.c() + dc;
 
         if (newRow < 0 || newRow >= R || newCol < 0 || newCol >= C) { return robot; }
         if (grid[newRow][newCol] == '#') { return robot; }
@@ -167,31 +167,27 @@ public class Day15WarehouseWoes {
     }
 
     public static long part1(final String fileName) {
-        SolutionInput input = parse(fileName);
+        final SolutionInput input = parse(fileName);
+        final int R = input.grid().length;
+        final int C = input.grid()[0].length;
         Cell start = input.start();
-        int R = input.grid().length;
-        int C = input.grid()[0].length;
 
         for (Character move : input.moves) {
             switch (move) {
                 case '<' -> {
-                    var cells = cellsToTheLeftOf(start, input.grid(), R, C);
-                    cells.addFirst(start);
+                    final var cells = cellsToTheLeftOf(start, input.grid(), R, C); cells.addFirst(start);
                     start = moveCellsLeft(cells, input.grid(), R, C, start);
                 }
                 case '>' -> {
-                    var cells = cellsToTheRightOf(start, input.grid(), R, C);
-                    cells.addFirst(start);
+                    final var cells = cellsToTheRightOf(start, input.grid(), R, C); cells.addFirst(start);
                     start = moveCellsRight(cells, input.grid(), R, C, start);
                 }
                 case '^' -> {
-                    var cells = cellsAbove(start, input.grid(), R, C);
-                    cells.addFirst(start);
+                    final var cells = cellsAbove(start, input.grid(), R, C); cells.addFirst(start);
                     start = moveCellsUp(cells, input.grid(), R, C, start);
                 }
                 case 'v' -> {
-                    var cells = cellsBelow(start, input.grid(), R, C);
-                    cells.addFirst(start);
+                    final var cells = cellsBelow(start, input.grid(), R, C); cells.addFirst(start);
                     start = moveCellsDown(cells, input.grid(), R, C, start);
                 }
             }
