@@ -1,10 +1,11 @@
 package dev.gmathur;
 
-import dev.gmathur.Day12GardenGroups.SolutionInput;
+import dev.gmathur.problems.Day12GardenGroups;
+import dev.gmathur.problems.Day12GardenGroups.SolutionInput;
 import org.junit.jupiter.api.Test;
 
-import static dev.gmathur.Day12GardenGroups.parse;
-import static dev.gmathur.Util.runTimedWithLabel;
+import static dev.gmathur.problems.Day12GardenGroups.parse;
+import static dev.gmathur.utils.Util.runTimedWithLabel;
 import static org.junit.jupiter.api.Assertions.*;
 
 class Day12GardenGroupsTest {

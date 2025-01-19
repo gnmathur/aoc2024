@@ -1,10 +1,11 @@
 package dev.gmathur;
 
+import dev.gmathur.problems.Day07BridgeRepair;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-import static dev.gmathur.Util.runTimedWithLabel;
+import static dev.gmathur.utils.Util.runTimedWithLabel;
 import static org.junit.jupiter.api.Assertions.*;
 
 class Day07BridgeRepairTest {

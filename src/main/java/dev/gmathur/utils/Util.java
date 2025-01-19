@@ -1,4 +1,4 @@
-package dev.gmathur;
+package dev.gmathur.utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class Util {
     public record AocResult<A, B>(A part1, B part2) { }

@@ -1,4 +1,6 @@
-package dev.gmathur;
+package dev.gmathur.problems;
+
+import dev.gmathur.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

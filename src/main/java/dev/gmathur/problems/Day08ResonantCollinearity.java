@@ -1,7 +1,7 @@
-package dev.gmathur;
+package dev.gmathur.problems;
 
-import dev.gmathur.Util.Pair;
-import dev.gmathur.Util.Triple;
+import dev.gmathur.utils.Util.Pair;
+import dev.gmathur.utils.Util.Triple;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

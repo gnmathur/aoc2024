@@ -1,4 +1,4 @@
-package dev.gmathur;
+package dev.gmathur.problems;
 
 import java.io.File;
 import java.io.IOException;

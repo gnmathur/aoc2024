@@ -1,6 +1,8 @@
-package dev.gmathur;
+package dev.gmathur.problems;
 
-import dev.gmathur.Util.Cell;
+import dev.gmathur.utils.Util.Cell;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -171,6 +173,7 @@ public class Day15WarehouseWoes {
         final int R = input.grid().length;
         final int C = input.grid()[0].length;
         Cell start = input.start();
+        List<char[][]> grids = new ArrayList<>();
 
         for (Character move : input.moves) {
             switch (move) {
@@ -191,8 +194,8 @@ public class Day15WarehouseWoes {
                     start = moveCellsDown(cells, input.grid(), R, C, start);
                 }
             }
+            grids.add(input.grid().clone());
         }
-
         return gpsCoordSum(input.grid());
     }
 }

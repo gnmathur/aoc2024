@@ -1,8 +1,9 @@
 package dev.gmathur;
 
+import dev.gmathur.problems.Day14RestroomRedoubt;
 import org.junit.jupiter.api.Test;
 
-import static dev.gmathur.Util.runTimedWithLabel;
+import static dev.gmathur.utils.Util.runTimedWithLabel;
 import static org.junit.jupiter.api.Assertions.*;
 
 class Day14RestroomRedoubtTest {

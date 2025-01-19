@@ -1,6 +1,6 @@
-package dev.gmathur;
+package dev.gmathur.problems;
 
-import dev.gmathur.Util.AocResult;
+import dev.gmathur.utils.Util.AocResult;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,8 +1,11 @@
 package dev.gmathur;
 
+import dev.gmathur.problems.Day15WarehouseWoes;
+import javafx.application.Platform;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static dev.gmathur.Util.runTimedWithLabel;
+import static dev.gmathur.utils.Util.runTimedWithLabel;
 import static org.junit.jupiter.api.Assertions.*;
 
 class Day15WarehouseWoesTest {
