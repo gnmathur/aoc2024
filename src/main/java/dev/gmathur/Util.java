@@ -20,9 +20,10 @@ public class Util {
         public String toString() {
             return "(" + first + ", " + second + ")";
         }
-
     }
     public record Triple<A, B, C>(A first, B second, C third) { }
+    public record Grid<T>(T[][] g, int R, int C) {}
+    public record Cell(int r, int c) {}
 
     public static <T> List<T> listExcludingElementAtI(List<T> list, int index) {
         List<T> result = new ArrayList<>(list);
