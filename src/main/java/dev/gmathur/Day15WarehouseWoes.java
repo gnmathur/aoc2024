@@ -92,7 +92,6 @@ public class Day15WarehouseWoes {
     private static Cell moveCellsLeft(ArrayDeque<Cell> cells, char[][] grid, Cell robot) {
         // If the last cell in cells list is at the left edge of the grid, or is to the right of a a cell with #, then
         // we can't move the cells to the left
-        if (cells.isEmpty()) { return robot; }
         if (cells.getLast().c() == 0) { return robot; }
         if (grid[cells.getLast().r()][cells.getLast().c() - 1] == '#') { return robot; }
         // Shift all cells in the list to the left on the grid
@@ -107,7 +106,6 @@ public class Day15WarehouseWoes {
     private static Cell moveCellsRight(ArrayDeque<Cell> cells, char[][] grid, Cell robot) {
         // If the last cell in cells list is at the right edge of the grid, or is to the left of a a cell with #, then
         // we can't move the cells to the right
-        if (cells.isEmpty()) { return robot; }
         if (cells.getLast().c() == grid[0].length - 1) { return robot; }
         if (grid[cells.getLast().r()][cells.getLast().c() + 1] == '#') { return robot; }
         // Shift all cells in the list to the right on the grid
@@ -122,7 +120,6 @@ public class Day15WarehouseWoes {
     private static Cell moveCellsUp(ArrayDeque<Cell> cells, char[][] grid, Cell robot) {
         // If the last cell in cells list is at the top edge of the grid, or is below a a cell with #, then
         // we can't move the cells up
-        if (cells.isEmpty()) { return robot; }
         if (cells.getLast().r() == 0) { return robot; }
         if (grid[cells.getLast().r() - 1][cells.getLast().c()] == '#') { return robot; }
         // Shift all cells in the list up on the grid
@@ -137,7 +134,6 @@ public class Day15WarehouseWoes {
     private static Cell moveCellsDown(ArrayDeque<Cell> cells, char[][] grid, Cell robot) {
         // If the last cell in cells list is at the bottom edge of the grid, or is above a a cell with #, then
         // we can't move the cells down
-        if (cells.isEmpty()) { return robot; }
         if (cells.getLast().r() == grid.length - 1) { return robot; }
         if (grid[cells.getLast().r() + 1][cells.getLast().c()] == '#') { return robot; }
         // Shift all cells in the list down on the grid
