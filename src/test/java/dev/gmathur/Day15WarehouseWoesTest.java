@@ -34,18 +34,15 @@ class Day15WarehouseWoesTest {
     }
 
     @Test
-    public void testPart2WithTestInput4() {
-        var r = Day15WarehouseWoes.part2("day15/d15_test4.dat");
-    }
-
-    @Test
     public void testPart2WithTestInput() {
         var r = Day15WarehouseWoes.part2("day15/d15_test.dat");
-        assertEquals(618, r);
+        assertEquals(9021, r);
     }
     @Test
     public void testPart2WithProblemInput() {
-        var r = Day15WarehouseWoes.part2("day15/d15.dat");
-        assertEquals(618, r);
+        runTimedWithLabel("D15 part 2 problem input", () -> {
+            var r = Day15WarehouseWoes.part2("day15/d15.dat");
+            assertEquals(1472235, r);
+        });
     }
 }

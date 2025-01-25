@@ -9,8 +9,8 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Day15WarehouseWoes {
-
     public record SolutionInput(char[][] grid, List<Character> moves, Cell start) {}
+    private static final char[] validChars = new char[]{'[', ']'};
 
     public static SolutionInput parse(final String fileName) {
         try(var reader = new BufferedReader(new InputStreamReader(
@@ -52,10 +52,9 @@ public class Day15WarehouseWoes {
     }
 
     private static ArrayDeque<WCell> findAdjacentBoxesToMoveUp(WCell wc, final char[][] grid, final int R, final int C) {
-        char[] validChars = new char[]{'[', ']'};
-        ArrayDeque<WCell> bfsQueue = new ArrayDeque<>();
-        ArrayDeque<WCell> visitedQueue = new ArrayDeque<>();
-        Set<WCell> discovered = new HashSet<>();
+        final ArrayDeque<WCell> bfsQueue = new ArrayDeque<>();
+        final ArrayDeque<WCell> visitedQueue = new ArrayDeque<>();
+        final Set<WCell> discovered = new HashSet<>();
 
         discovered.add(wc);
         visitedQueue.add(wc);
@@ -70,6 +69,7 @@ public class Day15WarehouseWoes {
         //       . @ -
         WCell topLeft = new WCell(wc.row() - 1, wc.lc()-1, wc.lc());
         WCell topRight = new WCell(wc.row() - 1, wc.lc(), wc.lc() + 1);
+
         if (topLeft.isValid(R, C) && topLeft.containsValidChar(grid, validChars)) {
             discovered.add(topLeft); bfsQueue.add(topLeft);
         }
@@ -78,7 +78,6 @@ public class Day15WarehouseWoes {
         }
 
         while (!bfsQueue.isEmpty()) {
-            // poll all at this level
             int L = bfsQueue.size();
             while (L-- > 0) {
                 WCell current = bfsQueue.poll();
@@ -99,13 +98,10 @@ public class Day15WarehouseWoes {
                 }
             }
         }
-
         return visitedQueue;
-
    }
 
     private static Cell moveAdjacentBoxesUp(final Cell robotLocation, final char[][] grid, final int R, final int C) {
-        Set<WCell> discovered = new HashSet<>();
         WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c() + 1); // pseudo wide cell
 
         ArrayDeque<WCell> cellsToMove = findAdjacentBoxesToMoveUp(robot, grid, R, C);
@@ -141,7 +137,6 @@ public class Day15WarehouseWoes {
 
     // Write routines to move boxes down
     private static ArrayDeque<WCell> findAdjacentBoxesToMoveDown(WCell wc, final char[][] grid, final int R, final int C) {
-        char[] validChars = new char[]{'[', ']'};
         ArrayDeque<WCell> bfsQueue = new ArrayDeque<>();
         ArrayDeque<WCell> visitedQueue = new ArrayDeque<>();
         Set<WCell> discovered = new HashSet<>();
@@ -235,7 +230,6 @@ public class Day15WarehouseWoes {
     }
 
     private static ArrayDeque<WCell> findAdjacentBoxesToLeft(WCell start, final char[][] grid, final int R, final int C) {
-        char[] validChars = new char[]{'[', ']'};
         ArrayDeque<WCell> q = new ArrayDeque<>();
 
         q.add(start);
@@ -256,10 +250,15 @@ public class Day15WarehouseWoes {
         // Find if we can move the rightmost box to the right
         boolean canMove = true;
         WCell leftMost = leftBoxes.getLast();
-        // 0 1 2 3
-        // [ ] . .
-        // # [ ] .
-        if (leftMost.isAtLeft() || grid[leftMost.row()][leftMost.lc()-1] == '#') {
+        if (!leftMost.equals(robot) && (leftMost.isAtLeft() || grid[leftMost.row()][leftMost.lc()-1] == '#')) {
+            // 0 1 2 3
+            // [ ] @ .
+            // # [ ] @
+            canMove = false;
+        } else if (leftMost.equals(robot) && ((robot.lc() == 0 || grid[robot.row()][robot.lc() - 1] == '#'))) {
+            // 0 1 2 3
+            // # @ .
+            // @ .
             canMove = false;
         }
         if (canMove) {
@@ -280,7 +279,6 @@ public class Day15WarehouseWoes {
 
 
     private static ArrayDeque<WCell> findAdjacentBoxesToRight(WCell start, final char[][] grid, final int R, final int C) {
-        char[] validChars = new char[]{'[', ']'};
         ArrayDeque<WCell> q = new ArrayDeque<>();
 
         q.add(start);
@@ -306,7 +304,7 @@ public class Day15WarehouseWoes {
             //     [ ]
             //    [] #
             canMove = false;
-        } else if (rightMost.equals(robot) && (robot.rc() == C || grid[rightMost.row()][rightMost.rc()] == '#')) {
+        } else if (rightMost.equals(robot) && (robot.rc() == C || grid[robot.row()][robot.rc()] == '#')) {
             // 0 1 2 3
             //     @ #
             //     . @
@@ -462,29 +460,17 @@ public class Day15WarehouseWoes {
         final SolutionInput input = parse(fileName);
         final int R = input.grid().length;
         final int C = input.grid()[0].length * 2;
-        char[][] w = generatePart2Warehouse(input.grid());
-        Cell startSmaller = input.start();
+        final char[][] w = generatePart2Warehouse(input.grid());
+        final Cell startSmaller = input.start();
         Cell start = new Cell(startSmaller.r(), startSmaller.c() * 2);
 
-        int moveNum = 1;
         for (Character move : input.moves) {
-            // System.out.println("Move: " + moveNum++ + ", Direction: " + move);
             switch (move) {
-                case '<' -> {
-                    start = moveAdjacentBoxesLeft(start, w, R, C);
-                }
-                case '>' -> {
-                    start = moveAdjacentBoxesRight(start, w, R, C);
-                }
-                case '^' -> {
-                    start = moveAdjacentBoxesUp(start, w, R, C);
-                }
-                case 'v' -> {
-                    start = moveAdjacentBoxesDown(start, w, R, C);
-                }
+                case '<' -> start = moveAdjacentBoxesLeft(start, w, R, C);
+                case '>' -> start = moveAdjacentBoxesRight(start, w, R, C);
+                case '^' -> start = moveAdjacentBoxesUp(start, w, R, C);
+                case 'v' -> start = moveAdjacentBoxesDown(start, w, R, C);
             }
-            // printGrid(w);
-            //System.out.println();
         }
         return gpsCoordSum(w, '[', 1, 2);
     }
