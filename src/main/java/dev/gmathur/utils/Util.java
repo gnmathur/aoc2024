@@ -21,7 +21,21 @@ public class Util {
     }
     public record Triple<A, B, C>(A first, B second, C third) { }
     public record Grid<T>(T[][] g, int R, int C) {}
+    // A record to represent a single cell, intersection of (row, col), in the grid
     public record Cell(int r, int c) {}
+    // A record to represent a wide cell. It occupies two horizontally adjacent (row, col) pairs in the grid
+    public record WCell(int row, int lc, int rc) {
+        public boolean isValid(int R, int C) {
+            return row >= 0 && row < R && lc >= 0 && lc < C && rc >= 0 && rc < C;
+        }
+        public boolean isAtTop() { return row == 0; }
+        public boolean isAtBottom(int R) { return row == R - 1; }
+        public boolean isAtLeft() { return lc == 0; }
+        public boolean isAtRight(int C) { return rc == C - 1; }
+        public boolean containsValidChar(char[][] grid, char[] validChars) {
+            return (grid[row][lc] == validChars[0] || grid[row][rc] == validChars[1]);
+        }
+    }
 
     public static <T> List<T> listExcludingElementAtI(List<T> list, int index) {
         List<T> result = new ArrayList<>(list);

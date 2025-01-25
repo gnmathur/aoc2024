@@ -1,16 +1,12 @@
 package dev.gmathur.problems;
 
 import dev.gmathur.utils.Util.Cell;
-import javafx.application.Platform;
-import javafx.stage.Stage;
+import dev.gmathur.utils.Util.WCell;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Day15WarehouseWoes {
 
@@ -53,6 +49,283 @@ public class Day15WarehouseWoes {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static ArrayDeque<WCell> findAdjacentBoxesToMoveUp(WCell wc, final char[][] grid, final int R, final int C) {
+        char[] validChars = new char[]{'[', ']'};
+        ArrayDeque<WCell> bfsQueue = new ArrayDeque<>();
+        ArrayDeque<WCell> visitedQueue = new ArrayDeque<>();
+        Set<WCell> discovered = new HashSet<>();
+
+        discovered.add(wc);
+        visitedQueue.add(wc);
+        // 0 1 2 3 4
+        //   [ ]
+        //   @ .
+        // 0 1 2 3 4
+        //   [ ] -
+        //   . @ .
+        // 0 1 2 3 4
+        //       [ ] -
+        //       . @ -
+        WCell topLeft = new WCell(wc.row() - 1, wc.lc()-1, wc.lc());
+        WCell topRight = new WCell(wc.row() - 1, wc.lc(), wc.lc() + 1);
+        if (topLeft.isValid(R, C) && topLeft.containsValidChar(grid, validChars)) {
+            discovered.add(topLeft); bfsQueue.add(topLeft);
+        }
+        if (topRight.isValid(R, C) && topRight.containsValidChar(grid, validChars)) {
+            discovered.add(topRight); bfsQueue.add(topRight);
+        }
+
+        while (!bfsQueue.isEmpty()) {
+            // poll all at this level
+            int L = bfsQueue.size();
+            while (L-- > 0) {
+                WCell current = bfsQueue.poll();
+                visitedQueue.add(current);
+
+                WCell top = new WCell(current.row() - 1, current.lc(), current.rc());
+                topLeft = new WCell(current.row() - 1, current.lc() - 1, current.lc());
+                topRight = new WCell(current.row() - 1, current.rc(), current.rc() + 1);
+
+                if (top.isValid(R, C) && top.containsValidChar(grid, validChars) && !discovered.contains(top)) {
+                    discovered.add(top); bfsQueue.add(top);
+                }
+                if (topLeft.isValid(R, C) && topLeft.containsValidChar(grid, validChars) && !discovered.contains(topLeft)) {
+                    discovered.add(topLeft); bfsQueue.add(topLeft);
+                }
+                if (topRight.isValid(R, C) && topRight.containsValidChar(grid, validChars) && !discovered.contains(topRight)) {
+                    discovered.add(topRight); bfsQueue.add(topRight);
+                }
+            }
+        }
+
+        return visitedQueue;
+
+   }
+
+    private static Cell moveAdjacentBoxesUp(final Cell robotLocation, final char[][] grid, final int R, final int C) {
+        Set<WCell> discovered = new HashSet<>();
+        WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c() + 1); // pseudo wide cell
+
+        ArrayDeque<WCell> cellsToMove = findAdjacentBoxesToMoveUp(robot, grid, R, C);
+        // Find out whether all cells at the top can be moved one row up
+        boolean canMove = true;
+        for (WCell wc : cellsToMove) {
+            // if robot
+            if (wc.equals(robot) && (wc.isAtTop() || grid[wc.row()-1][wc.lc()] == '#')) {
+                canMove = false;
+                break;
+            } else if (!wc.equals(robot) && (wc.isAtTop() || grid[wc.row()-1][wc.lc()] == '#' || grid[wc.row()-1][wc.rc()] == '#')) {
+                canMove = false;
+                break;
+            }
+        }
+        if (canMove) {
+            // move all cells except the robot cell up
+            for (WCell wc : cellsToMove.reversed()) {
+                if (wc.equals(robot)) { continue; }
+                grid[wc.row()-1][wc.lc()] = '[';
+                grid[wc.row()-1][wc.rc()] = ']';
+                grid[wc.row()][wc.lc()] = '.';
+                grid[wc.row()][wc.rc()] = '.';
+            }
+            // move the robot cell up
+            grid[robotLocation.r()-1][robotLocation.c()] = '@';
+            grid[robotLocation.r()][robotLocation.c()] = '.';
+            return new Cell(robotLocation.r() - 1, robotLocation.c());
+        }
+        // No cells can be moved up
+        return robotLocation;
+    }
+
+    // Write routines to move boxes down
+    private static ArrayDeque<WCell> findAdjacentBoxesToMoveDown(WCell wc, final char[][] grid, final int R, final int C) {
+        char[] validChars = new char[]{'[', ']'};
+        ArrayDeque<WCell> bfsQueue = new ArrayDeque<>();
+        ArrayDeque<WCell> visitedQueue = new ArrayDeque<>();
+        Set<WCell> discovered = new HashSet<>();
+
+        discovered.add(wc);
+        visitedQueue.add(wc);
+
+        // 0 1 2 3 4
+        //   @ . . .
+        //   [ ] . .
+        WCell bottomRight = new WCell(wc.row() + 1, wc.lc(), wc.lc() + 1);
+        // 0 1 2 3 4
+        // . . @ . .
+        // . [ ] . .
+        WCell bottomLeft = new WCell(wc.row() + 1, wc.lc() - 1, wc.lc());
+
+        if (bottomRight.isValid(R, C) && bottomRight.containsValidChar(grid, validChars)) {
+            discovered.add(bottomRight); bfsQueue.add(bottomRight);
+        }
+        if (bottomLeft.isValid(R, C) && bottomLeft.containsValidChar(grid, validChars)) {
+            discovered.add(bottomLeft); bfsQueue.add(bottomLeft);
+        }
+
+        while (!bfsQueue.isEmpty()) {
+            // poll all at this level
+            int L = bfsQueue.size();
+            while (L-- > 0) {
+                WCell current = bfsQueue.poll();
+                visitedQueue.add(current);
+
+                // 0 1 2 3 4
+                // . [ ] . . current
+                // . [ ] . . bottom
+                WCell bottom = new WCell(current.row() + 1, current.lc(), current.rc());
+                // 0 1 2 3 4
+                // . . [ ] .  current
+                // . [ ] . .  bottomLeft
+                bottomLeft = new WCell(current.row() + 1, current.lc() - 1, current.lc());
+                // 0 1 2 3 4
+                // . [ ] . . current
+                // . . [ ] . bottomRight
+                bottomRight = new WCell(current.row() + 1, current.rc(), current.rc() + 1);
+
+                if (bottom.isValid(R, C) && bottom.containsValidChar(grid, validChars) && !discovered.contains(bottom)) {
+                    discovered.add(bottom); bfsQueue.add(bottom);
+                }
+                if (bottomLeft.isValid(R, C) && bottomLeft.containsValidChar(grid, validChars) && !discovered.contains(bottomLeft)) {
+                    discovered.add(bottomLeft); bfsQueue.add(bottomLeft);
+                }
+                if (bottomRight.isValid(R, C) && bottomRight.containsValidChar(grid, validChars) && !discovered.contains(bottomRight)) {
+                    discovered.add(bottomRight); bfsQueue.add(bottomRight);
+                }
+            }
+        }
+        return visitedQueue;
+    }
+
+
+    private static Cell moveAdjacentBoxesDown(final Cell robotLocation, final char[][] grid, final int R, final int C) {
+        WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c() + 1); // pseudo wide cell
+
+        ArrayDeque<WCell> cellsToMove = findAdjacentBoxesToMoveDown(robot, grid, R, C);
+        boolean canMove = true;
+        for (WCell wc : cellsToMove) {
+            // if robot
+            if (wc.equals(robot) && (wc.isAtBottom(R) || grid[wc.row()+1][wc.lc()] == '#')) {
+                canMove = false;
+                break;
+            } else if (!wc.equals(robot) && (wc.isAtBottom(R) || grid[wc.row()+1][wc.lc()] == '#' || grid[wc.row()+1][wc.rc()] == '#')) {
+                canMove = false;
+                break;
+            }
+        }
+        if (canMove) {
+            // move all cells except the robot cell up
+            for (WCell wc : cellsToMove.reversed()) {
+                if (wc.equals(robot)) { continue; }
+                grid[wc.row()+1][wc.lc()] = '[';
+                grid[wc.row()+1][wc.rc()] = ']';
+                grid[wc.row()][wc.lc()] = '.';
+                grid[wc.row()][wc.rc()] = '.';
+            }
+            // move the robot cell down
+            grid[robotLocation.r()+1][robotLocation.c()] = '@';
+            grid[robotLocation.r()][robotLocation.c()] = '.';
+            // return new location of the robot
+            return new Cell(robotLocation.r() + 1, robotLocation.c());
+        }
+        // No cells can be moved down
+        return robotLocation;
+    }
+
+    private static ArrayDeque<WCell> findAdjacentBoxesToLeft(WCell start, final char[][] grid, final int R, final int C) {
+        char[] validChars = new char[]{'[', ']'};
+        ArrayDeque<WCell> q = new ArrayDeque<>();
+
+        q.add(start);
+
+        WCell left = new WCell(start.row(), start.lc()-2, start.lc()-1);
+        while (left.isValid(R, C) && left.containsValidChar(grid, validChars)) {
+            q.add(left);
+            left = new WCell(left.row(), left.lc() - 2, left.rc() - 2);
+        }
+
+        return q;
+    }
+
+    private static Cell moveAdjacentBoxesLeft(final Cell robotLocation, final char[][] grid, final int R, final int C) {
+        WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c()+1); // pseudo wide cell
+
+        ArrayDeque<WCell> leftBoxes = findAdjacentBoxesToLeft(robot, grid, R, C);
+        // Find if we can move the rightmost box to the right
+        boolean canMove = true;
+        WCell leftMost = leftBoxes.getLast();
+        // 0 1 2 3
+        // [ ] . .
+        // # [ ] .
+        if (leftMost.isAtLeft() || grid[leftMost.row()][leftMost.lc()-1] == '#') {
+            canMove = false;
+        }
+        if (canMove) {
+            for (WCell wc : leftBoxes.reversed()) {
+                if (wc.equals(robot)) { continue; }
+                grid[wc.row()][wc.lc()] = '.';
+                grid[wc.row()][wc.rc()] = '.';
+                grid[wc.row()][wc.lc()-1] = '[';
+                grid[wc.row()][wc.rc()-1] = ']';
+            }
+            // move the robot cell to the left
+            grid[robotLocation.r()][robotLocation.c()-1] = '@';
+            grid[robotLocation.r()][robotLocation.c()] = '.';
+            return new Cell(robotLocation.r(), robotLocation.c() - 1);
+        }
+        return robotLocation;
+    }
+
+
+    private static ArrayDeque<WCell> findAdjacentBoxesToRight(WCell start, final char[][] grid, final int R, final int C) {
+        char[] validChars = new char[]{'[', ']'};
+        ArrayDeque<WCell> q = new ArrayDeque<>();
+
+        q.add(start);
+
+        WCell right = new WCell(start.row(), start.lc()+1, start.lc() + 2);
+        while (right.isValid(R, C) && right.containsValidChar(grid, validChars)) {
+            q.add(right);
+            right = new WCell(right.row(), right.lc() + 2, right.rc() + 2);
+        }
+
+        return q;
+    }
+
+    private static Cell moveAdjacentBoxesRight(final Cell robotLocation, final char[][] grid, final int R, final int C) {
+        WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c()+1); // pseudo wide cell
+
+        ArrayDeque<WCell> rightBoxes = findAdjacentBoxesToRight(robot, grid, R, C);
+        // Find if we can move the rightmost box to the right
+        boolean canMove = true;
+        WCell rightMost = rightBoxes.getLast();
+        if (!(rightMost.equals(robot)) && (rightMost.isAtRight(C) || grid[rightMost.row()][rightMost.rc()+1] == '#')) {
+            // 0 1 2 3
+            //     [ ]
+            //    [] #
+            canMove = false;
+        } else if (rightMost.equals(robot) && (robot.rc() == C || grid[rightMost.row()][rightMost.rc()] == '#')) {
+            // 0 1 2 3
+            //     @ #
+            //     . @
+            canMove = false;
+        }
+        if (canMove) {
+            for (WCell wc : rightBoxes.reversed()) {
+                if (wc.equals(robot)) { continue; }
+                grid[wc.row()][wc.lc()] = '.';
+                grid[wc.row()][wc.rc()] = '.';
+                grid[wc.row()][wc.lc()+1] = '[';
+                grid[wc.row()][wc.rc()+1] = ']';
+            }
+            // move the robot cell to the right
+            grid[robotLocation.r()][robotLocation.c()+1] = '@';
+            grid[robotLocation.r()][robotLocation.c()] = '.';
+            return new Cell(robotLocation.r(), robotLocation.c() + 1);
+        }
+        return robotLocation;
     }
 
     /**
@@ -158,14 +431,62 @@ public class Day15WarehouseWoes {
         System.out.println("-----------");
     }
 
-    private static long gpsCoordSum(char[][] grid) {
+    private static long gpsCoordSum(char[][] grid, char boxChar, int topBottomPadding, int leftRightPadding) {
         long sum = 0;
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[r].length; c++) {
-                sum += grid[r][c] == 'O' ? 100L * (r + 1) + (c + 1) : 0;
+                sum += grid[r][c] == boxChar ? 100L * (r + topBottomPadding) + (c + leftRightPadding) : 0;
             }
         }
         return sum;
+    }
+
+    private static char[][] generatePart2Warehouse(final char[][] part1Warehouse) {
+        final int R = part1Warehouse.length;
+        final int C = part1Warehouse[0].length;
+        final char[][] w = new char[R][C * 2];
+
+        for (int r = 0; r < R; r++) {
+            for (int c = 0; c < C; c++) {
+                if (part1Warehouse[r][c] == 'O') { w[r][c*2] = '['; w[r][c*2 + 1] = ']'; }
+                else if (part1Warehouse[r][c] == '#') { w[r][c*2] = '#'; w[r][c*2 + 1] = '#'; }
+                else if (part1Warehouse[r][c] == '@') { w[r][c*2] = '@'; w[r][c*2 + 1] = '.'; }
+                else { w[r][c*2] = '.'; w[r][c*2 + 1] = '.'; }
+            }
+        }
+
+        return w;
+    }
+
+    public static long part2(final String fileName) {
+        final SolutionInput input = parse(fileName);
+        final int R = input.grid().length;
+        final int C = input.grid()[0].length * 2;
+        char[][] w = generatePart2Warehouse(input.grid());
+        Cell startSmaller = input.start();
+        Cell start = new Cell(startSmaller.r(), startSmaller.c() * 2);
+
+        int moveNum = 1;
+        for (Character move : input.moves) {
+            // System.out.println("Move: " + moveNum++ + ", Direction: " + move);
+            switch (move) {
+                case '<' -> {
+                    start = moveAdjacentBoxesLeft(start, w, R, C);
+                }
+                case '>' -> {
+                    start = moveAdjacentBoxesRight(start, w, R, C);
+                }
+                case '^' -> {
+                    start = moveAdjacentBoxesUp(start, w, R, C);
+                }
+                case 'v' -> {
+                    start = moveAdjacentBoxesDown(start, w, R, C);
+                }
+            }
+            // printGrid(w);
+            //System.out.println();
+        }
+        return gpsCoordSum(w, '[', 1, 2);
     }
 
     public static long part1(final String fileName) {
@@ -196,6 +517,6 @@ public class Day15WarehouseWoes {
             }
             grids.add(input.grid().clone());
         }
-        return gpsCoordSum(input.grid());
+        return gpsCoordSum(input.grid(), 'O', 1, 1);
     }
 }

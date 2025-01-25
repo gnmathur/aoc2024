@@ -1,8 +1,6 @@
 package dev.gmathur;
 
 import dev.gmathur.problems.Day15WarehouseWoes;
-import javafx.application.Platform;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static dev.gmathur.utils.Util.runTimedWithLabel;
@@ -29,4 +27,25 @@ class Day15WarehouseWoesTest {
         });
     }
 
+    @Test
+    public void testPart2WithTestInput3() {
+        var r = Day15WarehouseWoes.part2("day15/d15_test3.dat");
+        assertEquals(618, r);
+    }
+
+    @Test
+    public void testPart2WithTestInput4() {
+        var r = Day15WarehouseWoes.part2("day15/d15_test4.dat");
+    }
+
+    @Test
+    public void testPart2WithTestInput() {
+        var r = Day15WarehouseWoes.part2("day15/d15_test.dat");
+        assertEquals(618, r);
+    }
+    @Test
+    public void testPart2WithProblemInput() {
+        var r = Day15WarehouseWoes.part2("day15/d15.dat");
+        assertEquals(618, r);
+    }
 }
