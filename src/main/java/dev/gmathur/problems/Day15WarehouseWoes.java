@@ -105,10 +105,8 @@ public class Day15WarehouseWoes {
         WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c() + 1); // pseudo wide cell
 
         ArrayDeque<WCell> cellsToMove = findAdjacentBoxesToMoveUp(robot, grid, R, C);
-        // Find out whether all cells at the top can be moved one row up
         boolean canMove = true;
         for (WCell wc : cellsToMove) {
-            // if robot
             if (wc.equals(robot) && (wc.isAtTop() || grid[wc.row()-1][wc.lc()] == '#')) {
                 canMove = false;
                 break;
@@ -118,7 +116,6 @@ public class Day15WarehouseWoes {
             }
         }
         if (canMove) {
-            // move all cells except the robot cell up
             for (WCell wc : cellsToMove.reversed()) {
                 if (wc.equals(robot)) { continue; }
                 grid[wc.row()-1][wc.lc()] = '[';
@@ -126,24 +123,28 @@ public class Day15WarehouseWoes {
                 grid[wc.row()][wc.lc()] = '.';
                 grid[wc.row()][wc.rc()] = '.';
             }
-            // move the robot cell up
             grid[robotLocation.r()-1][robotLocation.c()] = '@';
             grid[robotLocation.r()][robotLocation.c()] = '.';
             return new Cell(robotLocation.r() - 1, robotLocation.c());
         }
-        // No cells can be moved up
         return robotLocation;
     }
 
-    // Write routines to move boxes down
-    private static ArrayDeque<WCell> findAdjacentBoxesToMoveDown(WCell wc, final char[][] grid, final int R, final int C) {
-        ArrayDeque<WCell> bfsQueue = new ArrayDeque<>();
-        ArrayDeque<WCell> visitedQueue = new ArrayDeque<>();
-        Set<WCell> discovered = new HashSet<>();
+    /**
+     * A Breadth First Search (BFS) based solution to find all the boxes that can be moved down. We start by finding
+     * if there is any box below the robot cell. Then we find all the boxes that can be moved down from the box below
+     * and so on.
+     */
+    private static ArrayDeque<WCell> findAdjacentBoxesToMoveDown(WCell wc, final char[][] grid, final int R,
+                                                                 final int C) {
+        final ArrayDeque<WCell> bfsQueue = new ArrayDeque<>();
+        final ArrayDeque<WCell> visitedQueue = new ArrayDeque<>();
+        final Set<WCell> discovered = new HashSet<>();
 
         discovered.add(wc);
         visitedQueue.add(wc);
 
+        // Start by finding any box below the robot cell
         // 0 1 2 3 4
         //   @ . . .
         //   [ ] . .
@@ -161,9 +162,8 @@ public class Day15WarehouseWoes {
         }
 
         while (!bfsQueue.isEmpty()) {
-            // poll all at this level
             int L = bfsQueue.size();
-            while (L-- > 0) {
+            while (L-- > 0) { // process all boxes in a single row
                 WCell current = bfsQueue.poll();
                 visitedQueue.add(current);
 
@@ -196,22 +196,37 @@ public class Day15WarehouseWoes {
 
 
     private static Cell moveAdjacentBoxesDown(final Cell robotLocation, final char[][] grid, final int R, final int C) {
-        WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c() + 1); // pseudo wide cell
+        // Turn the robot cell into a pseudo wide cell
+        WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c() + 1);
 
-        ArrayDeque<WCell> cellsToMove = findAdjacentBoxesToMoveDown(robot, grid, R, C);
+        // Find out all the boxes that can be moved down.
+        final ArrayDeque<WCell> cellsToMove = findAdjacentBoxesToMoveDown(robot, grid, R, C);
+
+        // Let's find out if we can move all the cells down. We do this by checking ALL the cells individually. Note
+        // that's not enough to check the leading cells only because of conditions like this this -
+        // 0 1 2 3 4
+        // . @ . . .
+        // . [ ] . .
+        // . . [ ] .
+        // . [ ] X .
+        // . . . . .
+        // note the X. The leading box is the one that is at the bottom. It can be moved but the box in the middle
+        // row cannot be moved down because the wall is in the way.
         boolean canMove = true;
         for (WCell wc : cellsToMove) {
-            // if robot
             if (wc.equals(robot) && (wc.isAtBottom(R) || grid[wc.row()+1][wc.lc()] == '#')) {
+                // We need to check the robot cell separately because it is not a true wide cell. It's right half of
+                // the wide cell is not really going to move and should be excluded from the check.
                 canMove = false;
                 break;
-            } else if (!wc.equals(robot) && (wc.isAtBottom(R) || grid[wc.row()+1][wc.lc()] == '#' || grid[wc.row()+1][wc.rc()] == '#')) {
+            } else if (!wc.equals(robot) && (wc.isAtBottom(R) || grid[wc.row()+1][wc.lc()] == '#' ||
+                    grid[wc.row()+1][wc.rc()] == '#')) {
                 canMove = false;
                 break;
             }
         }
         if (canMove) {
-            // move all cells except the robot cell up
+            // Move all the cells except the robot cell down
             for (WCell wc : cellsToMove.reversed()) {
                 if (wc.equals(robot)) { continue; }
                 grid[wc.row()+1][wc.lc()] = '[';
@@ -219,10 +234,10 @@ public class Day15WarehouseWoes {
                 grid[wc.row()][wc.lc()] = '.';
                 grid[wc.row()][wc.rc()] = '.';
             }
-            // move the robot cell down
+            // Move the robot cell down
             grid[robotLocation.r()+1][robotLocation.c()] = '@';
             grid[robotLocation.r()][robotLocation.c()] = '.';
-            // return new location of the robot
+            // Return new location of the robot
             return new Cell(robotLocation.r() + 1, robotLocation.c());
         }
         // No cells can be moved down
@@ -244,11 +259,14 @@ public class Day15WarehouseWoes {
     }
 
     private static Cell moveAdjacentBoxesLeft(final Cell robotLocation, final char[][] grid, final int R, final int C) {
-        WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c()+1); // pseudo wide cell
+        // Turn the robot cell into a pseudo wide cell. We do this so that we can apply the same logic to the robot cell
+        final WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c()+1);
 
-        ArrayDeque<WCell> leftBoxes = findAdjacentBoxesToLeft(robot, grid, R, C);
-        // Find if we can move the rightmost box to the right
+        // Find out all the boxes that can be moved to the left. These are boxes that are adjacent to the robot cell
+        final ArrayDeque<WCell> leftBoxes = findAdjacentBoxesToLeft(robot, grid, R, C);
+
         boolean canMove = true;
+        // All the boxes can be moved left only if the leading box has room to move left
         WCell leftMost = leftBoxes.getLast();
         if (!leftMost.equals(robot) && (leftMost.isAtLeft() || grid[leftMost.row()][leftMost.lc()-1] == '#')) {
             // 0 1 2 3
@@ -256,6 +274,7 @@ public class Day15WarehouseWoes {
             // # [ ] @
             canMove = false;
         } else if (leftMost.equals(robot) && ((robot.lc() == 0 || grid[robot.row()][robot.lc() - 1] == '#'))) {
+            // We need to check the robot cell separately because it is not a true wide cell
             // 0 1 2 3
             // # @ .
             // @ .
@@ -263,13 +282,14 @@ public class Day15WarehouseWoes {
         }
         if (canMove) {
             for (WCell wc : leftBoxes.reversed()) {
+                // We'll skip the robot cell because it is not a true wide cell and needs to be handled separately
                 if (wc.equals(robot)) { continue; }
                 grid[wc.row()][wc.lc()] = '.';
                 grid[wc.row()][wc.rc()] = '.';
                 grid[wc.row()][wc.lc()-1] = '[';
                 grid[wc.row()][wc.rc()-1] = ']';
             }
-            // move the robot cell to the left
+            // Finally, move the robot cell to the left
             grid[robotLocation.r()][robotLocation.c()-1] = '@';
             grid[robotLocation.r()][robotLocation.c()] = '.';
             return new Cell(robotLocation.r(), robotLocation.c() - 1);
@@ -278,25 +298,35 @@ public class Day15WarehouseWoes {
     }
 
 
-    private static ArrayDeque<WCell> findAdjacentBoxesToRight(WCell start, final char[][] grid, final int R, final int C) {
-        ArrayDeque<WCell> q = new ArrayDeque<>();
+    private static ArrayDeque<WCell> findAdjacentBoxesToRight(final WCell start, final char[][] grid, final int R,
+                                                              final int C) {
+        final ArrayDeque<WCell> q = new ArrayDeque<>();
 
         q.add(start);
-
+        // The box to the right of the robot
         WCell right = new WCell(start.row(), start.lc()+1, start.lc() + 2);
+
         while (right.isValid(R, C) && right.containsValidChar(grid, validChars)) {
             q.add(right);
+            // The box to the right of the current box
             right = new WCell(right.row(), right.lc() + 2, right.rc() + 2);
         }
 
         return q;
     }
 
-    private static Cell moveAdjacentBoxesRight(final Cell robotLocation, final char[][] grid, final int R, final int C) {
+    private static Cell moveAdjacentBoxesRight(final Cell robotLocation, final char[][] grid, final int R,
+                                               final int C) {
+        // Turn the robot cell into a pseudo wide cell. We do this so that we can apply the same logic to the robot cell
+        // as we do to the boxes.
         WCell robot = new WCell(robotLocation.r(), robotLocation.c(), robotLocation.c()+1); // pseudo wide cell
 
+        // Find out all the boxes that can be moved to the right. These are boxes that are adjacent to the robot cell
+        // and can potentially be moved to the right.
         ArrayDeque<WCell> rightBoxes = findAdjacentBoxesToRight(robot, grid, R, C);
-        // Find if we can move the rightmost box to the right
+
+        // Find if we can move the rightmost box to the right. We can move the robot and its adjacent boxes to the right
+        // only if the rightmost box is movable.
         boolean canMove = true;
         WCell rightMost = rightBoxes.getLast();
         if (!(rightMost.equals(robot)) && (rightMost.isAtRight(C) || grid[rightMost.row()][rightMost.rc()+1] == '#')) {
@@ -305,20 +335,24 @@ public class Day15WarehouseWoes {
             //    [] #
             canMove = false;
         } else if (rightMost.equals(robot) && (robot.rc() == C || grid[robot.row()][robot.rc()] == '#')) {
+            // We need to special case the robot cell because it is not a true wide cell.
             // 0 1 2 3
             //     @ #
             //     . @
             canMove = false;
         }
         if (canMove) {
+            // Reverse the order of the boxes so that we move the leading box first, and the trailing box (the robot)
+            // last.
             for (WCell wc : rightBoxes.reversed()) {
+                // Special case the robot cell, because its not a true wide cell
                 if (wc.equals(robot)) { continue; }
                 grid[wc.row()][wc.lc()] = '.';
                 grid[wc.row()][wc.rc()] = '.';
                 grid[wc.row()][wc.lc()+1] = '[';
                 grid[wc.row()][wc.rc()+1] = ']';
             }
-            // move the robot cell to the right
+            // Finally, move the robot cell to the right
             grid[robotLocation.r()][robotLocation.c()+1] = '@';
             grid[robotLocation.r()][robotLocation.c()] = '.';
             return new Cell(robotLocation.r(), robotLocation.c() + 1);
@@ -418,6 +452,17 @@ public class Day15WarehouseWoes {
         return moveCells(cells, grid, robot, R, C, 1, 0);
     }
 
+    private static void writeFrameToFile(final char[][] grid, final String fileName) {
+        // Append the current frame to the file
+        try (var writer = new java.io.FileWriter(fileName, true)) {
+            for (char[] row : grid) {
+                writer.write(new String(row) + "\n");
+            }
+            writer.write("\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private static void printGrid(char[][] grid) {
         for (char[] row : grid) {
@@ -426,10 +471,14 @@ public class Day15WarehouseWoes {
             }
             System.out.println();
         }
-        System.out.println("-----------");
+        System.out.println(); System.out.println();
     }
 
-    private static long gpsCoordSum(char[][] grid, char boxChar, int topBottomPadding, int leftRightPadding) {
+    /**
+     * Calculate the sum of the GPS coordinates of the boxes following the rules in the problem statement.
+     */
+    private static long gpsCoordSum(final char[][] grid, final char boxChar, final int topBottomPadding,
+                                    final int leftRightPadding) {
         long sum = 0;
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[r].length; c++) {
@@ -439,6 +488,21 @@ public class Day15WarehouseWoes {
         return sum;
     }
 
+    /**
+     * Generate a warehouse for part 2. The warehouse for part 2 is twice as wide as the warehouse for part 1. The
+     * warehouse for part 2 has the following rules:
+     * 1. If a cell in the part 1 warehouse is marked as 'O', then the corresponding cell in the part 2 warehouse is
+     *      marked as '[' and the cell to the right of it is marked as ']'.
+     * 2. If a cell in the part 1 warehouse is marked as '#', then the corresponding cell in the part 2 warehouse is
+     *      marked as '#' and the cell to the right of it is marked as '#'.
+     *  3. If a cell in the part 1 warehouse is marked as '@', then the corresponding cell in the part 2 warehouse is
+     *      marked as '@' and the cell to the right of it is marked as '.'.
+     *  4. If a cell in the part 1 warehouse is marked as '.', then the corresponding cell in the part 2 warehouse is
+     *      marked as '.' and the cell to the right of it is marked as '.'.
+     *
+     * @param part1Warehouse the warehouse grid for part 1
+     * @return the warehouse grid for part 2
+     */
     private static char[][] generatePart2Warehouse(final char[][] part1Warehouse) {
         final int R = part1Warehouse.length;
         final int C = part1Warehouse[0].length;
@@ -471,6 +535,7 @@ public class Day15WarehouseWoes {
                 case '^' -> start = moveAdjacentBoxesUp(start, w, R, C);
                 case 'v' -> start = moveAdjacentBoxesDown(start, w, R, C);
             }
+            writeFrameToFile(w, "frames.txt");
         }
         return gpsCoordSum(w, '[', 1, 2);
     }
