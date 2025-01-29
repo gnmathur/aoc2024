@@ -1,6 +1,5 @@
-package dev.gmathur;
+package dev.gmathur.problems;
 
-import dev.gmathur.problems.Day07BridgeRepair;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;

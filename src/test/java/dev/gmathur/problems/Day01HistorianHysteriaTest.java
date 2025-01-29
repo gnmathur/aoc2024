@@ -1,9 +1,8 @@
-package dev.gmathur;
+package dev.gmathur.problems;
 
 import static dev.gmathur.utils.Util.runTimed;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import dev.gmathur.problems.Day01HistorianHysteria;
 import org.junit.jupiter.api.Test;
 
 

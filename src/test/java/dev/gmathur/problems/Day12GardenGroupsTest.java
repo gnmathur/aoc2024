@@ -1,6 +1,5 @@
-package dev.gmathur;
+package dev.gmathur.problems;
 
-import dev.gmathur.problems.Day12GardenGroups;
 import dev.gmathur.problems.Day12GardenGroups.SolutionInput;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,5 @@
-package dev.gmathur;
+package dev.gmathur.problems;
 
-import dev.gmathur.problems.Day08ResonantCollinearity;
 import org.junit.jupiter.api.Test;
 
 import static dev.gmathur.utils.Util.runTimed;

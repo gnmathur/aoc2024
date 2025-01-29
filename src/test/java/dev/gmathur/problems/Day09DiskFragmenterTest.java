@@ -1,6 +1,5 @@
-package dev.gmathur;
+package dev.gmathur.problems;
 
-import dev.gmathur.problems.Day09DiskFragmenter;
 import dev.gmathur.utils.Util;
 import org.junit.jupiter.api.Test;
 

@@ -5,10 +5,8 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class Util {
     public record AocResult<A, B>(A part1, B part2) { }
@@ -35,6 +33,34 @@ public class Util {
         public boolean containsValidChar(char[][] grid, char[] validChars) {
             return (grid[row][lc] == validChars[0] || grid[row][rc] == validChars[1]);
         }
+    }
+    public enum Direction { NORTH, EAST, SOUTH, WEST; }
+
+    public static void printGrid(char[][] grid) {
+        // First collect all distinct characters in the grid and assign them a unique color
+        Set<Character> distinctChars = new HashSet<>();
+        for (char[] row : grid) {
+            for (char c : row) {
+                distinctChars.add(c);
+            }
+        }
+        // Associate each character with a unique color
+        Map<Character, String> colorMap = new HashMap<>();
+        // Ascii colors
+        String[] colors = {"\u001B[31m", "\u001B[32m", "\u001B[33m", "\u001B[34m", "\u001B[35m", "\u001B[36m"};
+        int i = 0;
+        for (char c : distinctChars) {
+            colorMap.put(c, colors[i++]);
+        }
+
+        // Draw the ascii grid
+        for (char[] row : grid) {
+            for (char c : row) {
+                System.out.print(colorMap.get(c) + c + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("\u001B[0m");  // Reset color
     }
 
     public static <T> List<T> listExcludingElementAtI(List<T> list, int index) {
