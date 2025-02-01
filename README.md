@@ -1,3 +1,5 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5377ce423af04e7b83e3d3af26913d7e)](https://app.codacy.com/gh/gnmathur/aoc2024/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 # Advent of Code 2024
 
 Java 21 solutions to AOC 2024. The aim is to achieve the following objectives, in the order of priority:
